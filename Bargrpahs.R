@@ -45,3 +45,31 @@ ggplot(pg_mean,aes(x=group,y=weight))+
 ggplot(cabbage_exp,aes(x=Date,y=Weight,fill=Cultivar,order=desc(Cultivar)))+
   geom_bar(stat="identity")+
   guides(fill=guide_legend(reverse=TRUE))
+
+#Making propotional bars
+head(cabbage_exp)
+ce=ddply(cabbage_exp,"Date",transform,
+         percent_weight=Weight/sum(Weight)*100)
+
+#Adding text labels
+
+
+ggplot(ce,aes(x=Date,y=percent_weight,fill=Cultivar),order=desc(Cultivar))+
+  geom_bar(stat="identity")+
+  scale_fill_brewer(palette = "Pastel2")+
+  geom_text(aes(label=Weight),vjust=1.5,color="white")
+
+#Adjusting y limits to be higher depending on Weight
+ggplot(ce,aes(x=interaction(Date,Cultivar),y=Weight))+
+  geom_bar(stat="identity")+
+  scale_fill_brewer(palette = "Pastel2")+
+  geom_text(aes(label=Weight),vjust=-0.2,color="white")+
+  ylim(0,max(cabbage_exp$Weight)*1.5)
+
+#Auto adjust range regardless of y range
+
+ggplot(ce,aes(x=interaction(Date,Cultivar),y=Weight,fill=Cultivar))+
+  geom_bar(stat="identity",position = "dodge")+
+  scale_fill_brewer(palette = "Pastel2")+
+  geom_text(aes(y=Weight+0.4,label=Weight),vjust=-0.1,color="blue")
+
